@@ -1,3 +1,12 @@
 app:
   profile: prod
 
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cascade
+    username: cascade
+    password: cascade
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+

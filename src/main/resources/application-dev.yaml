@@ -1,2 +1,14 @@
 app:
   profile: dev
+
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:devdb
+    driverClassName: org.h2.Driver
+    username: cascade
+    password: cascade
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    format_sql: true
