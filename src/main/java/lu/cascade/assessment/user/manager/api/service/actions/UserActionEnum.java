@@ -25,7 +25,7 @@ public enum UserActionEnum {
     public ActionHandler setUpHandler(UserRepository userRepository){
         if(userRepository == null){
             log.error("Setting up ActionHandler with null value");
-            throw UserManagerTechnicalException.builder().message("UserRepository is null").build();
+            throw UserManagerTechnicalException.technicalbuilder().message("UserRepository is null").build();
         }
         this.actionHandler.setUserRepository(userRepository);
         return this.actionHandler;

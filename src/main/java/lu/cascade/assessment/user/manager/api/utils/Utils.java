@@ -34,7 +34,7 @@ public class Utils {
             return bytesToHex(hashbytes);
         }catch (Exception ex){
             log.error("Couldn't hash the value [{}] using algorithm [{}] ",value, HASH_ALGORITHM,ex);
-            throw UserManagerTechnicalException.builder().message("Error during hash function").build();
+            throw UserManagerTechnicalException.technicalbuilder().message("Error during hash function").build();
         }
     }
 
