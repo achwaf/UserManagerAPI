@@ -11,14 +11,14 @@ import org.springframework.util.StringUtils;
 @Setter
 public class UserForm {
 
-    private String userName;
+    private String username;
 
     private String password;
 
     private Boolean passwordShouldBeChanged;
 
     public boolean isUserNameValid(){
-        return StringUtils.hasText(userName) && userName.length() < Utils.ALLOWED_LENGTH_USERNAME && Utils.isEmailValid(userName);
+        return StringUtils.hasText(username) && username.length() < Utils.ALLOWED_LENGTH_USERNAME && Utils.isEmailValid(username);
     }
 
     public boolean isPasswordValid(){

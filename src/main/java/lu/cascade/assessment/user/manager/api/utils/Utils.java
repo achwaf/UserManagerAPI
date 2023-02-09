@@ -27,11 +27,16 @@ public class Utils {
     }
 
     static public String hash(String value){
+       return hash(value,"SomePepper");
+    }
+
+    static public String hash(String value, String secretKey){
         try {
+            String prefixedValue = secretKey + value;
             final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
-            final byte[] hashbytes = digest.digest(
-                    value.getBytes(StandardCharsets.UTF_8));
-            return bytesToHex(hashbytes);
+            final byte[] hashBytes = digest.digest(
+                    prefixedValue.getBytes(StandardCharsets.UTF_8));
+            return bytesToHex(hashBytes);
         }catch (Exception ex){
             log.error("Couldn't hash the value [{}] using algorithm [{}] ",value, HASH_ALGORITHM,ex);
             throw UserManagerTechnicalException.technicalbuilder().message("Error during hash function").build();

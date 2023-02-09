@@ -1,17 +1,18 @@
 package lu.cascade.assessment.user.manager.api.service;
 
-import jdk.jshell.execution.Util;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lu.cascade.assessment.user.manager.api.dto.UserAction;
 import lu.cascade.assessment.user.manager.api.dto.UserForm;
+import lu.cascade.assessment.user.manager.api.dto.UserStatus;
 import lu.cascade.assessment.user.manager.api.model.UserEntity;
 import lu.cascade.assessment.user.manager.api.repository.UserRepository;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerTechnicalException;
 import lu.cascade.assessment.user.manager.api.utils.Utils;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
@@ -39,7 +40,7 @@ public class UserManagerService {
 
         // check userName is not used
         log.info("Checking username is not used");
-        if(userRepository.findByUserName(userForm.getUserName()).isPresent()){
+        if(userRepository.findByUserName(userForm.getUsername()).isPresent()){
             throw UserManagerException.builder().message("UserName already used").build();
         }
 
@@ -47,7 +48,7 @@ public class UserManagerService {
         log.info("Registering new user");
         try{
             UserEntity newUser = UserEntity.builder()
-                    .userName(userForm.getUserName())
+                    .username(userForm.getUsername())
                     .passwordHash(Utils.hash(userForm.getPassword()))
                     .build();
             userRepository.save(newUser);
@@ -58,6 +59,11 @@ public class UserManagerService {
 
     public void login(UserForm userForm){
 
+    }
+
+    public List<UserStatus> getUsers(){
+        Iterable<UserStatus> usersIterable = userRepository.findAllById();
+        return StreamSupport.stream(usersIterable.spliterator(), false).toList();
     }
 
     private void validateForRegistration(UserForm userForm){

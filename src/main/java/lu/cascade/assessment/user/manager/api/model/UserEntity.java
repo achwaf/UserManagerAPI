@@ -18,7 +18,7 @@ public class UserEntity {
     private long id;
 
     @Column(unique=true)
-    private String userName;
+    private String username;
 
     private String passwordHash;
 

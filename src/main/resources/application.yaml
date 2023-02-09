@@ -3,3 +3,7 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
+
+app:
+  security:
+    secret-key: super-secret
