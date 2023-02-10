@@ -6,7 +6,7 @@ package lu.cascade.assessment.user.manager.api.dto;
 public interface UserStatus {
 
     String getUsername();
-
     boolean isDisabled();
+
 
 }

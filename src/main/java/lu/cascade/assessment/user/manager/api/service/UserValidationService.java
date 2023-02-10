@@ -1,11 +1,15 @@
 package lu.cascade.assessment.user.manager.api.service;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lu.cascade.assessment.user.manager.api.repository.UserRepository;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerException;
 import lu.cascade.assessment.user.manager.api.utils.Utils;
 
 @Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class UserValidationService {
 
     protected UserRepository userRepository;

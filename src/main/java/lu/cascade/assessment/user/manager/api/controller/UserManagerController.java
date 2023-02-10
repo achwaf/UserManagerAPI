@@ -4,10 +4,7 @@ package lu.cascade.assessment.user.manager.api.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lu.cascade.assessment.user.manager.api.dto.ApiError;
-import lu.cascade.assessment.user.manager.api.dto.UserAction;
-import lu.cascade.assessment.user.manager.api.dto.UserForm;
-import lu.cascade.assessment.user.manager.api.dto.UserStatus;
+import lu.cascade.assessment.user.manager.api.dto.*;
 import lu.cascade.assessment.user.manager.api.service.UserActionService;
 import lu.cascade.assessment.user.manager.api.service.UserManagerService;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerException;
@@ -55,11 +52,11 @@ public class UserManagerController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String appId, @RequestBody UserForm userForm){
+    public UserLoginResult login(@RequestParam String appId, @RequestBody UserForm userForm){
         log.info("Performing login");
-        String accessToken = userManagerService.login(appId, userForm);
+        UserLoginResult userResult = userManagerService.login(appId, userForm);
         log.info("login success");
-        return ResponseEntity.ok(accessToken);
+        return userResult;
     }
 
     /**
@@ -70,7 +67,7 @@ public class UserManagerController {
     public List<UserStatus> getUsers(HttpServletRequest request){
         log.info("Getting list of Users");
         // get UserId
-        long idUserPerformer = (long) request.getAttribute("userId");
+        long idUserPerformer = Long.parseLong(request.getAttribute("userId").toString());
         // get users
         List<UserStatus> userStatusList = userManagerService.getUsers(idUserPerformer);
         log.info("Returning list with [{}] users", userStatusList.size());
@@ -86,7 +83,7 @@ public class UserManagerController {
     public ResponseEntity<String> manage(@RequestBody @Valid UserAction userAction, HttpServletRequest request) {
         log.info("Managing user by performing action [{}]", userAction.getAction());
         // get UserId
-        long idUserPerformer = (long) request.getAttribute("userId");
+        long idUserPerformer =  Long.parseLong(request.getAttribute("userId").toString());
         // handle the action
         userActionService.process(userAction, idUserPerformer);
         log.info("Action performed");
@@ -98,21 +95,22 @@ public class UserManagerController {
      */
     @ExceptionHandler({ Throwable.class})
     public ResponseEntity<Object> handleException(Throwable ex) {
-        log.error("Error : ",ex);
+        String tracker = "ERR" + errorTracker.addAndGet(1);
+        log.error("ERROR [{}] ",tracker,ex);
         if(ex instanceof UserManagerException){
             UserManagerException appException = (UserManagerException) ex;
             return ResponseEntity
                     .badRequest().body(ApiError.builder()
                             .message("Exception raised during the processing of the request")
                             .details(appException.getMessage())
-                            .tracker("ERR" + errorTracker.addAndGet(1))
+                            .tracker(tracker)
                             .build());
         }else{
             return ResponseEntity
                     .internalServerError().body(ApiError.builder()
                             .message("Error occurred during the processing of the request")
-                            .details(ex.getMessage())
-                            .tracker("ERR" + errorTracker.addAndGet(1))
+                            .details("See logs for more details")
+                            .tracker(tracker)
                             .build());
         }
 

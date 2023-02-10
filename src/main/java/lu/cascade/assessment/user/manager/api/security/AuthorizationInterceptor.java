@@ -35,7 +35,9 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         }
 
         // validate authorization
-        // a time validation check could also be implemented
+        // More secure checks could be implemented (time validation, random seed validation)
+        // or just use the standard JWT or Oauth
+        // but here the accessToken is just valid forever
         try{
             String accessToken = aesHelper.decrypt(encryptedAccessToken);
             String decryptedSessionId = accessToken.split(":")[0];

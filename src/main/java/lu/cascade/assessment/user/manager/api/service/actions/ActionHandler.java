@@ -1,5 +1,7 @@
 package lu.cascade.assessment.user.manager.api.service.actions;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lu.cascade.assessment.user.manager.api.dto.UserAction;
@@ -9,9 +11,11 @@ import lu.cascade.assessment.user.manager.api.repository.UserRepository;
 import lu.cascade.assessment.user.manager.api.service.UserValidationService;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerException;
 
-@Setter
 @Slf4j
 public abstract class ActionHandler extends UserValidationService {
+    public void setUserRepository(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public void process(UserAction userAction, long idUserPerformer){
         try{

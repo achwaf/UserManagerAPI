@@ -1,8 +1,11 @@
 package lu.cascade.assessment.user.manager.api.service;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lu.cascade.assessment.user.manager.api.dto.UserForm;
+import lu.cascade.assessment.user.manager.api.dto.UserLoginResult;
 import lu.cascade.assessment.user.manager.api.dto.UserStatus;
 import lu.cascade.assessment.user.manager.api.model.UserEntity;
 import lu.cascade.assessment.user.manager.api.repository.UserRepository;
@@ -10,6 +13,7 @@ import lu.cascade.assessment.user.manager.api.security.AESHelper;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerTechnicalException;
 import lu.cascade.assessment.user.manager.api.utils.Utils;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,11 +22,15 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class UserManagerService extends UserValidationService{
     private AESHelper aesHelper;
-    private UserRepository userRepository;
+
+    @Autowired
+    public UserManagerService(UserRepository userRepository, AESHelper aesHelper) {
+        super(userRepository);
+        this.aesHelper = aesHelper;
+    }
 
     public void register(UserForm userForm){
         // validate inputs
@@ -48,7 +56,7 @@ public class UserManagerService extends UserValidationService{
         }
     }
 
-    public String login(String appId, UserForm userForm){
+    public UserLoginResult login(String appId, UserForm userForm){
         // validate inputs
         log.info("Validating User input");
         validateForRegistrationAndLogin(userForm);
@@ -78,10 +86,14 @@ public class UserManagerService extends UserValidationService{
         String encryptedAccessToken = aesHelper.encrypt(accessToken);
 
         log.debug("accessToken [{}] encrypted to [{}]", accessToken,encryptedAccessToken);
-        return encryptedAccessToken;
+        return UserLoginResult.builder()
+                .token(encryptedAccessToken)
+                .passwordShouldBeChanged(userOptional.get().isPasswordShouldBeChanged())
+                .build();
     }
 
     public List<UserStatus> getUsers(long idUserPerformer){
+        log.debug("UserID [{}]", idUserPerformer);
         // check user can still get users
         userRepository.findById(idUserPerformer).filter(u -> !u.isDisabled())
                 .orElseThrow(() -> UserManagerException.builder().message("User disabled or not found").build());
