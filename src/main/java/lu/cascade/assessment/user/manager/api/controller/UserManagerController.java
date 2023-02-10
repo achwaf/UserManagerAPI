@@ -21,26 +21,30 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 @RequestMapping(path = "/assessment", produces = "application/json")
-@AllArgsConstructor
 @Slf4j
 public class UserManagerController {
 
     private UserManagerService userManagerService;
     private UserActionService userActionService;
-    private AtomicLong errorTracker;
+    private AtomicLong errorTracker = new AtomicLong();
+
+    public UserManagerController(UserManagerService userManagerService, UserActionService userActionService) {
+        this.userManagerService = userManagerService;
+        this.userActionService = userActionService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserForm userForm) {
         log.info("Registering a new user");
         userManagerService.register(userForm);
         log.info("Registration done");
-        return ResponseEntity.ok("done");
+        return ResponseEntity.ok("Successfully registered");
     }
 
     @GetMapping("/form/check")
     public Boolean checkUserNameExistence(@RequestParam(name = "username") String userNameBase64){
         log.info("Checking existence of userName [{}]", userNameBase64);
-        Boolean result = userManagerService.isUserNameAlreadyUsed(userNameBase64);
+        Boolean result = userManagerService.isUserNameBase64AlreadyUsed(userNameBase64);
         log.info("Check result [{}]", result);
         return result;
     }
@@ -63,9 +67,12 @@ public class UserManagerController {
      * @return
      */
     @GetMapping("/auth/users")
-    public List<UserStatus> getUsers(){
+    public List<UserStatus> getUsers(HttpServletRequest request){
         log.info("Getting list of Users");
-        List<UserStatus> userStatusList = userManagerService.getUsers();
+        // get UserId
+        long idUserPerformer = (long) request.getAttribute("userId");
+        // get users
+        List<UserStatus> userStatusList = userManagerService.getUsers(idUserPerformer);
         log.info("Returning list with [{}] users", userStatusList.size());
         return userStatusList;
     }
@@ -78,7 +85,7 @@ public class UserManagerController {
     @PostMapping("/auth/manage")
     public ResponseEntity<String> manage(@RequestBody @Valid UserAction userAction, HttpServletRequest request) {
         log.info("Managing user by performing action [{}]", userAction.getAction());
-        // check and validate accesstoken
+        // get UserId
         long idUserPerformer = (long) request.getAttribute("userId");
         // handle the action
         userActionService.process(userAction, idUserPerformer);

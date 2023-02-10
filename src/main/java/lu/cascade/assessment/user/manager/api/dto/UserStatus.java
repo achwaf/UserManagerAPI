@@ -1,8 +1,8 @@
 package lu.cascade.assessment.user.manager.api.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
+/**
+ * Projection for UserEntity
+ */
 public interface UserStatus {
 
     String getUsername();

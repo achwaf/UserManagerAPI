@@ -8,6 +8,9 @@ class UserManagerApiApplicationTests {
 
 	@Test
 	void contextLoads() {
+		/**
+		 * in a real case project, Unit tests + integration tests + e2e tests are necessary
+		 */
 	}
 
 }

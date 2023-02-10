@@ -1,6 +1,5 @@
 package lu.cascade.assessment.user.manager.api.service;
 
-import jdk.jshell.execution.Util;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lu.cascade.assessment.user.manager.api.dto.UserForm;
@@ -21,23 +20,9 @@ import java.util.stream.StreamSupport;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserManagerService {
-
-    private UserRepository userRepository;
-
+public class UserManagerService extends UserValidationService{
     private AESHelper aesHelper;
-
-
-    public boolean isUserNameAlreadyUsed(String userNameBase64){
-        // decode the userNameBase64
-        log.info("Decoding Username");
-        String userName = Utils.fromBase64(userNameBase64);
-        log.info("Username decoded to [{}]", userName);
-
-        // check in the DB
-        log.info("Checking existence in DB");
-        return userRepository.findByUserName(userName).isPresent();
-    }
+    private UserRepository userRepository;
 
     public void register(UserForm userForm){
         // validate inputs
@@ -46,7 +31,7 @@ public class UserManagerService {
 
         // check userName is not used
         log.info("Checking username is not used");
-        if(userRepository.findByUserName(userForm.getUsername()).isPresent()){
+        if(userRepository.findByUsername(userForm.getUsername()).isPresent()){
             throw UserManagerException.builder().message("UserName already used").build();
         }
 
@@ -71,9 +56,9 @@ public class UserManagerService {
 
         // check userName exists in DB
         log.info("Checking username in DB");
-        Optional<UserEntity> userOptional = userRepository.findByUserName(userForm.getUsername());
+        Optional<UserEntity> userOptional = userRepository.findByUsername(userForm.getUsername());
         if(userOptional.isEmpty()){
-            throw UserManagerException.builder().message("UserName not found").build();
+            throw UserManagerException.builder().message("Bad credentials").build();
         }
 
         // check password is matching
@@ -81,7 +66,7 @@ public class UserManagerService {
         String passwordHashCalculated = Utils.hash(userForm.getPassword());
         String passwordHashInDB = userOptional.get().getPasswordHash();
         if(!passwordHashInDB.equals(passwordHashCalculated)){
-            throw UserManagerException.builder().message("Bad password").build();
+            throw UserManagerException.builder().message("Bad credentials").build();
         }
 
         // the user is legit, let's generate an accessToken : appID + userID
@@ -96,8 +81,12 @@ public class UserManagerService {
         return encryptedAccessToken;
     }
 
-    public List<UserStatus> getUsers(){
-        Iterable<UserStatus> usersIterable = userRepository.findAllById();
+    public List<UserStatus> getUsers(long idUserPerformer){
+        // check user can still get users
+        userRepository.findById(idUserPerformer).filter(u -> !u.isDisabled())
+                .orElseThrow(() -> UserManagerException.builder().message("User disabled or not found").build());
+        // list of users
+        Iterable<UserStatus> usersIterable = userRepository.findBy();
         return StreamSupport.stream(usersIterable.spliterator(), false).toList();
     }
 

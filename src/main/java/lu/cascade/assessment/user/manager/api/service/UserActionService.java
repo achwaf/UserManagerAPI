@@ -19,18 +19,16 @@ public class UserActionService
 
     public void process(UserAction userAction, long idUserPerformer){
         log.info("Processing User action");
-        if(userAction == null && (userAction.getActionDetails() == null || userAction.getAction() == null)){
+        if(userAction == null || userAction.getActionDetails() == null || userAction.getAction() == null){
             throw UserManagerException.builder().message("Action details are not valid").build();
         }
         log.info("Current action  [{}]", userAction.getAction());
         // Setup Handler with userRepository
         ActionHandler actionHandler = userAction.getAction().setUpHandler(userRepository);
 
-        // validate
-        actionHandler.validate(userAction);
+        // validate and perform action
+        actionHandler.process(userAction, idUserPerformer);
 
-        // perform
-        actionHandler.perform(userAction, idUserPerformer);
     }
 
 }

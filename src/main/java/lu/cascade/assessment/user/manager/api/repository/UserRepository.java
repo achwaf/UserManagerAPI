@@ -6,14 +6,22 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
 
-    Optional<UserEntity> findByUserName(String userName);
+    /**
+     * find a user by his username
+     * @param userName the username to look for
+     * @return the user matching the username
+     */
+    Optional<UserEntity> findByUsername(String userName);
 
-    Collection<UserStatus> findAllById();
+    /**
+     * using JPA projection to return only the username and disabled flag
+     * @return list of user statuses
+     */
+    Collection<UserStatus> findBy();
 }

@@ -1,7 +1,6 @@
 package lu.cascade.assessment.user.manager.api.security;
 
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +15,13 @@ import java.util.Arrays;
 import java.util.Base64;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class AESHelper {
     private static SecretKeySpec secretKeySpec;
     private static final String ALGORITHM = "AES";
 
     @Value("app.security.secret-key")
-    private final String secretKey;
+    private String secretKey;
 
     @PostConstruct
     public void prepareSecreteKey() {

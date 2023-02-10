@@ -22,6 +22,7 @@ public class UserForm {
     }
 
     public boolean isPasswordValid(){
+        // valid if empty or length < allowed_length
         return !StringUtils.hasText(password) || password.length() < Utils.ALLOWED_LENGTH_PASSWORD;
     }
 
