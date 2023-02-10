@@ -51,37 +51,35 @@ public class UserManagerController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserForm userForm){
+    public ResponseEntity<String> login(@RequestParam String appId, @RequestBody UserForm userForm){
         log.info("Performing login");
-        userManagerService.login(userForm);
+        String accessToken = userManagerService.login(appId, userForm);
         log.info("login success");
-        return ResponseEntity.ok("done");
+        return ResponseEntity.ok(accessToken);
     }
 
     /**
-     * don't forget to add the front end random seed
+     *
      * @return
      */
     @GetMapping("/auth/users")
     public List<UserStatus> getUsers(){
-        log.info("Performing login");
+        log.info("Getting list of Users");
         List<UserStatus> userStatusList = userManagerService.getUsers();
-        log.info("login success");
+        log.info("Returning list with [{}] users", userStatusList.size());
         return userStatusList;
     }
 
     /**
      * keeping authorization simple by using header to pass token
      * @param userAction
-     * @param accessToken
-     * @param sessionID
      * @return
      */
     @PostMapping("/auth/manage")
     public ResponseEntity<String> manage(@RequestBody @Valid UserAction userAction, HttpServletRequest request) {
         log.info("Managing user by performing action [{}]", userAction.getAction());
         // check and validate accesstoken
-        long idUserPerformer = Utils.checkSecurityAccess(request.getAttribute(), sessionID);
+        long idUserPerformer = (long) request.getAttribute("userId");
         // handle the action
         userActionService.process(userAction, idUserPerformer);
         log.info("Action performed");
@@ -110,7 +108,6 @@ public class UserManagerController {
                             .tracker("ERR" + errorTracker.addAndGet(1))
                             .build());
         }
-        HttpServletRequest a;a.se
 
     }
 

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.regex.Pattern;
 
@@ -36,11 +35,16 @@ public class Utils {
             final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
             final byte[] hashBytes = digest.digest(
                     prefixedValue.getBytes(StandardCharsets.UTF_8));
-            return bytesToHex(hashBytes);
+            return bytesToBase64(hashBytes);
         }catch (Exception ex){
             log.error("Couldn't hash the value [{}] using algorithm [{}] ",value, HASH_ALGORITHM,ex);
             throw UserManagerTechnicalException.technicalbuilder().message("Error during hash function").build();
         }
+    }
+
+    private static String bytesToBase64(byte[] hash){
+        byte[] decoded = Base64.getDecoder().decode(hash);
+        return new String(decoded);
     }
 
     private static String bytesToHex(byte[] hash) {
