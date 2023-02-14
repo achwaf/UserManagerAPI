@@ -90,6 +90,7 @@ public class UserManagerService extends UserValidationService{
         return UserLoginResult.builder()
                 .token(encryptedAccessToken)
                 .passwordShouldBeChanged(userOptional.get().isPasswordShouldBeChanged())
+                .avatar(userOptional.get().getAvatar())
                 .build();
     }
 

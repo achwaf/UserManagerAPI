@@ -7,6 +7,7 @@ public interface UserStatus {
 
     String getUsername();
     boolean isDisabled();
+    int getAvatar();
 
 
 }
