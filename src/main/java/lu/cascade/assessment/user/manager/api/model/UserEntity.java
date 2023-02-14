@@ -26,4 +26,6 @@ public class UserEntity {
 
     private boolean disabled;
 
+    private int avatar;
+
 }

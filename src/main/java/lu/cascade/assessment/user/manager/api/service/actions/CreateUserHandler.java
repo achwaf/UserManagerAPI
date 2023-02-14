@@ -30,6 +30,7 @@ public class CreateUserHandler extends ActionHandler {
                 .username(userAction.getActionDetails().getUsername())
                 .passwordHash(Utils.hash(userAction.getActionDetails().getPassword()))
                 .passwordShouldBeChanged(userAction.getActionDetails().getPasswordShouldBeChanged())
+                .avatar(userAction.getActionDetails().getAvatar())
                 .build();
         userRepository.save(newUser);
     }

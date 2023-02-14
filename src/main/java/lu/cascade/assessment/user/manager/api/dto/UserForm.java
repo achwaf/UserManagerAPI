@@ -17,6 +17,8 @@ public class UserForm {
 
     private Boolean passwordShouldBeChanged;
 
+    private int avatar;
+
     public boolean isUserNameValid(){
         return StringUtils.hasText(username) && username.length() < Utils.ALLOWED_LENGTH_USERNAME && Utils.isEmailValid(username);
     }

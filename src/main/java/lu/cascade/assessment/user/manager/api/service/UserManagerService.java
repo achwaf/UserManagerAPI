@@ -49,6 +49,7 @@ public class UserManagerService extends UserValidationService{
             UserEntity newUser = UserEntity.builder()
                     .username(userForm.getUsername())
                     .passwordHash(Utils.hash(userForm.getPassword()))
+                    .avatar(userForm.getAvatar())
                     .build();
             userRepository.save(newUser);
         }catch (UserManagerTechnicalException ex){
