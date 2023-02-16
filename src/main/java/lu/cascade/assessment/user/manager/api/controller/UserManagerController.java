@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/assessment", produces = "application/json")
 @Slf4j
 public class UserManagerController {

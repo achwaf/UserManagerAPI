@@ -20,11 +20,22 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     private static final String HEADER_TOKEN = "access-token";
     private static final String HEADER_SESSION = "session-id";
 
+    private static final String AC_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+    private static final String AC_ALLOW_METHODS = "Access-Control-Allow-Methods";
+    private static final String AC_ALLOW_HEADERS = "Access-Control-Allow-Headers";
     @Override
     public boolean preHandle(
             HttpServletRequest request,
             HttpServletResponse response,
             Object handler) throws Exception {
+
+        // allows CORS for front
+        if( "OPTIONS".equals(request.getMethod())) {
+            response.setHeader(AC_ALLOW_ORIGIN, "http://localhost:4200");
+            response.setHeader(AC_ALLOW_METHODS, "*");
+            response.setHeader(AC_ALLOW_HEADERS, "*");
+            return false;
+        }
 
         // check existence of security headers
         String encryptedAccessToken = request.getHeader(HEADER_TOKEN);
