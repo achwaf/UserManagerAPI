@@ -100,7 +100,8 @@ public class UserManagerService extends UserValidationService{
         userRepository.findById(idUserPerformer).filter(u -> !u.isDisabled())
                 .orElseThrow(() -> UserManagerException.builder().message("User disabled or not found").build());
         // list of users
-        Iterable<UserStatus> usersIterable = userRepository.findBy();
+        Iterable<UserStatus> usersIterable = userRepository.findByIdIsNot(idUserPerformer);
+        // remove the request owner and return result
         return StreamSupport.stream(usersIterable.spliterator(), false).toList();
     }
 

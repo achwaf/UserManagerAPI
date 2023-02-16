@@ -23,5 +23,5 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
      * using JPA projection to return only the username and disabled flag
      * @return list of user statuses
      */
-    Collection<UserStatus> findBy();
+    Collection<UserStatus> findByIdIsNot(long id);
 }
