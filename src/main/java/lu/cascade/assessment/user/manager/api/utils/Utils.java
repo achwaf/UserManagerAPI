@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class Utils {
 
     final static private String HASH_ALGORITHM = "SHA3-256";
-    final static private String REGEX_EMAIL = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    final static private String REGEX_EMAIL = "^[\\w\\.-]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     final static private Pattern PATTERN_EMAIL = Pattern.compile(REGEX_EMAIL);
     final static public int ALLOWED_LENGTH_USERNAME= 45;
     final static public int ALLOWED_LENGTH_PASSWORD= 30;

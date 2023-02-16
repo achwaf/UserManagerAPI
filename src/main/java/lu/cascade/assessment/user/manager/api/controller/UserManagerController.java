@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/assessment", produces = "application/json")
 @Slf4j
 public class UserManagerController {
@@ -29,11 +30,11 @@ public class UserManagerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserForm userForm) {
+    public ResponseEntity<Boolean> register(@RequestBody UserForm userForm) {
         log.info("Registering a new user");
         userManagerService.register(userForm);
         log.info("Registration done");
-        return ResponseEntity.ok("Successfully registered");
+        return ResponseEntity.ok(true);
     }
 
     @GetMapping("/form/check")
