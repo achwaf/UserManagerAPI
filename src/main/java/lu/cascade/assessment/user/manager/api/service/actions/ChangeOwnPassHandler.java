@@ -20,6 +20,7 @@ public class ChangeOwnPassHandler extends ActionHandler {
                 .orElseThrow(() -> UserManagerException.builder().message("Your user no longer exists").build());
         // change the password
         user.setPasswordHash(Utils.hash(userAction.getActionDetails().getPassword()));
+        user.setPasswordShouldBeChanged(false);
         // change the avatar too
         user.setAvatar(userAction.getActionDetails().getAvatar());
         // save the user
