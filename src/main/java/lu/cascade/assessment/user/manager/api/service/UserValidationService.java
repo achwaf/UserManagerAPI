@@ -3,6 +3,7 @@ package lu.cascade.assessment.user.manager.api.service;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lu.cascade.assessment.user.manager.api.model.UserEntity;
 import lu.cascade.assessment.user.manager.api.repository.UserRepository;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerException;
 import lu.cascade.assessment.user.manager.api.utils.Utils;
@@ -29,8 +30,11 @@ public abstract class UserValidationService {
     }
 
     protected void validateUserPerformer(long id){
-        userRepository.findById(id).filter(u -> !u.isDisabled())
-                .orElseThrow(() -> UserManagerException.builder().message("User disabled or not found").build());
+        UserEntity user =userRepository.findById(id)
+                .orElseThrow(() -> UserManagerException.builder().message("Your user no longer exists").build());
+        if(user.isDisabled()){
+            throw UserManagerException.builder().message("Your user has been disabled").build();
+        }
     }
 
 }

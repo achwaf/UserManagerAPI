@@ -17,9 +17,11 @@ public class ChangeOwnPassHandler extends ActionHandler {
     @Override
     public void perform(UserAction userAction, long idUserPerformer) {
         UserEntity user = userRepository.findById(idUserPerformer)
-                .orElseThrow(() -> UserManagerException.builder().message("User not found").build());
+                .orElseThrow(() -> UserManagerException.builder().message("Your user no longer exists").build());
         // change the password
         user.setPasswordHash(Utils.hash(userAction.getActionDetails().getPassword()));
+        // change the avatar too
+        user.setAvatar(userAction.getActionDetails().getAvatar());
         // save the user
         userRepository.save(user);
     }

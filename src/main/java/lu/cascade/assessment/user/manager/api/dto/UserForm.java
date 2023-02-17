@@ -15,7 +15,7 @@ public class UserForm {
 
     private String password;
 
-    private Boolean passwordShouldBeChanged;
+    private boolean passwordShouldBeChanged;
 
     private int avatar;
 

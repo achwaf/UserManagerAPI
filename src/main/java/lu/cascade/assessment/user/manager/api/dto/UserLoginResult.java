@@ -12,6 +12,7 @@ public class UserLoginResult {
     private String token;
     private boolean passwordShouldBeChanged;
     private int avatar;
+    private String username;
 
 
 }

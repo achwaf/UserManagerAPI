@@ -67,7 +67,15 @@ public class UserManagerService extends UserValidationService{
         log.info("Checking username in DB");
         Optional<UserEntity> userOptional = userRepository.findByUsername(userForm.getUsername());
         if(userOptional.isEmpty()){
+            // we don't tell user that username is not found: maybe the user did a typo in his username
             throw UserManagerException.builder().message("Bad credentials").build();
+        }
+
+        // check user is not disbaled
+        log.info("Checking username is not disabled");
+        if(userOptional.get().isDisabled()){
+            // we don't tell user that username is not found: maybe the user did a typo in his username
+            throw UserManagerException.builder().message("User is disabled").build();
         }
 
         // check password is matching
@@ -94,11 +102,23 @@ public class UserManagerService extends UserValidationService{
                 .build();
     }
 
+    public UserLoginResult getUser(long userId){
+        log.info("getting user from DB");
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        if(userOptional.isEmpty()){
+            throw UserManagerException.builder().message("User from session no longer exists").build();
+        }
+        return UserLoginResult.builder()
+                .username(userOptional.get().getUsername())
+                .passwordShouldBeChanged(userOptional.get().isPasswordShouldBeChanged())
+                .avatar(userOptional.get().getAvatar())
+                .build();
+    }
+
     public List<UserStatus> getUsers(long idUserPerformer){
         log.debug("UserID [{}]", idUserPerformer);
         // check user can still get users
-        userRepository.findById(idUserPerformer).filter(u -> !u.isDisabled())
-                .orElseThrow(() -> UserManagerException.builder().message("User disabled or not found").build());
+        validateUserPerformer(idUserPerformer);
         // list of users
         Iterable<UserStatus> usersIterable = userRepository.findByIdIsNot(idUserPerformer);
         // remove the request owner and return result
@@ -109,9 +129,9 @@ public class UserManagerService extends UserValidationService{
         if(userForm == null){
             throw UserManagerException.builder().message("Registration details are empty").build();
         }else if(!userForm.isUserNameValid()){
-            throw UserManagerException.builder().message("UserName is not valid").build();
+            throw UserManagerException.builder().message("Username is not valid").build();
         }else if(!userForm.isPasswordValid()){
-            throw UserManagerException.builder().message("password is not valid").build();
+            throw UserManagerException.builder().message("Password is not valid").build();
         }
     }
 

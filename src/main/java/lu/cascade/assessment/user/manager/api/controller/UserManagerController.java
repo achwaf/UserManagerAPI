@@ -74,19 +74,34 @@ public class UserManagerController {
     }
 
     /**
+     *
+     * @return
+     */
+    @GetMapping("/auth/user")
+    public UserLoginResult getUser(HttpServletRequest request){
+        log.info("Getting the user from session (case of Refresh page)");
+        // get UserId
+        long idUserPerformer = Long.parseLong(request.getAttribute("userId").toString());
+        // get user from session
+        UserLoginResult userResult  = userManagerService.getUser(idUserPerformer);
+        log.info("Returning user from session");
+        return userResult;
+    }
+
+    /**
      * keeping authorization simple by using header to pass token
      * @param userAction
      * @return
      */
     @PostMapping("/auth/manage")
-    public ResponseEntity<String> manage(@RequestBody @Valid UserAction userAction, HttpServletRequest request) {
+    public ResponseEntity<Boolean> manage(@RequestBody @Valid UserAction userAction, HttpServletRequest request) {
         log.info("Managing user by performing action [{}]", userAction.getAction());
         // get UserId
         long idUserPerformer =  Long.parseLong(request.getAttribute("userId").toString());
         // handle the action
         userActionService.process(userAction, idUserPerformer);
         log.info("Action performed");
-        return ResponseEntity.ok("done");
+        return ResponseEntity.ok(true);
     }
 
     /**

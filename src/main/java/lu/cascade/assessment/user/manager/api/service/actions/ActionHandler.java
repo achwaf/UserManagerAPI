@@ -10,6 +10,7 @@ import lu.cascade.assessment.user.manager.api.model.UserEntity;
 import lu.cascade.assessment.user.manager.api.repository.UserRepository;
 import lu.cascade.assessment.user.manager.api.service.UserValidationService;
 import lu.cascade.assessment.user.manager.api.utils.UserManagerException;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 public abstract class ActionHandler extends UserValidationService {
@@ -26,7 +27,7 @@ public abstract class ActionHandler extends UserValidationService {
             throw ex;
         }catch (Exception e){
             String message = "Exception raised during the process of action [{"+ userAction.getAction() + "}]";
-            log.error(message);
+            log.error(message,e);
             throw UserManagerException.builder().message(message).build();
         }
     }

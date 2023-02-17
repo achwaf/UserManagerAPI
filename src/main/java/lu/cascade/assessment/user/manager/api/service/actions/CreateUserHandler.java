@@ -29,7 +29,7 @@ public class CreateUserHandler extends ActionHandler {
         UserEntity newUser = UserEntity.builder()
                 .username(userAction.getActionDetails().getUsername())
                 .passwordHash(Utils.hash(userAction.getActionDetails().getPassword()))
-                .passwordShouldBeChanged(userAction.getActionDetails().getPasswordShouldBeChanged())
+                .passwordShouldBeChanged(userAction.getActionDetails().isPasswordShouldBeChanged())
                 .avatar(userAction.getActionDetails().getAvatar())
                 .build();
         userRepository.save(newUser);
